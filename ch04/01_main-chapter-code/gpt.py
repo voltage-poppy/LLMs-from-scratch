@@ -99,10 +99,13 @@ class MultiHeadAttention(nn.Module):
         attn_weights = self.dropout(attn_weights)
 
         # Shape: (b, num_tokens, num_heads, head_dim)
+        # 注：具体为 (1, num_tokens, 12, 64)
         context_vec = (attn_weights @ values).transpose(1, 2)
 
         # Combine heads, where self.d_out = self.num_heads * self.head_dim
         context_vec = context_vec.contiguous().view(b, num_tokens, self.d_out)
+
+        # 注：self.out_proj 之前和之后的 shape 都为 (1, num_tokens, 768)
         context_vec = self.out_proj(context_vec)  # optional projection
 
         return context_vec
